@@ -11,6 +11,11 @@
   <button onclick="sendData('tomorrow')">Завтра</button>
   <button onclick="sendData('3days')">3 дня</button>
 
+  <hr>
+  <button onclick="sendData('/danila')">Как дела у Данила?</button>
+  <button onclick="sendData('/nihongo')">📚 Японский</button>
+  <button onclick="sendData('/tools')">🛠 Инструменты</button>
+
   <script>
     function sendData(data) {
       Telegram.WebApp.sendData(data);
