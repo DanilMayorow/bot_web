@@ -1,26 +1,31 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Прогноз погоды</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-</head>
-<body>
-  <h1>Погода в Токио</h1>
-  <button onclick="sendData('today')">Сегодня</button>
-  <button onclick="sendData('tomorrow')">Завтра</button>
-  <button onclick="sendData('3days')">3 дня</button>
+from telegram import ReplyKeyboardMarkup, KeyboardButton
 
-  <hr>
-  <button onclick="sendData('/danila')">Как дела у Данила?</button>
-  <button onclick="sendData('/nihongo')">📚 Японский</button>
-  <button onclick="sendData('/tools')">🛠 Инструменты</button>
+# Главное меню с кнопками
+async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [
+        [KeyboardButton("🌤 Сегодня"), KeyboardButton("🌦 Завтра"), KeyboardButton("📅 3 дня")],
+        [KeyboardButton("👋 Как дела у Данила?")],
+        [KeyboardButton("📚 Японский"), KeyboardButton("🛠 Инструменты")]
+    ]
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    await update.message.reply_text("Выбери один из пунктов меню:", reply_markup=reply_markup)
 
-  <script>
-    function sendData(data) {
-      Telegram.WebApp.sendData(data);
-      Telegram.WebApp.close();
-    }
-  </script>
-</body>
-</html>
+async def handle_text_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = update.message.text
+    if text == "🌤 Сегодня":
+        forecast = get_weather_forecast(days=1, offset=0)
+        await update.message.reply_text(f"Прогноз:\n{forecast}")
+    elif text == "🌦 Завтра":
+        forecast = get_weather_forecast(days=1, offset=1)
+        await update.message.reply_text(f"Прогноз:\n{forecast}")
+    elif text == "📅 3 дня":
+        forecast = get_weather_forecast(days=3, offset=0)
+        await update.message.reply_text(f"Прогноз:\n{forecast}")
+    elif text == "👋 Как дела у Данила?":
+        await hows_danila(update, context)
+    elif text == "📚 Японский":
+        await nihongo_section(update, context)
+    elif text == "🛠 Инструменты":
+        await tools_section(update, context)
+    else:
+        await update.message.reply_text("Пожалуйста, выбери кнопку из меню.")
